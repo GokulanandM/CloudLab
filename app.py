@@ -36,8 +36,8 @@ except Exception as e:
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'srikrish2705guru@gmail.com'
-app.config['MAIL_PASSWORD'] = 'gdxp twdw rmdx bmpl'
+app.config['MAIL_USERNAME'] = 'gokulkvmhs2020@gmail.com'
+app.config['MAIL_PASSWORD'] = 'jhmu ehci mkcs tdke'
 
 mail = Mail(app)
 
