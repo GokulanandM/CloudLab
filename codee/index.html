@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marunthagam Medical Assistant</title>
+    <!-- Link to a CSS framework like Bootstrap or custom CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> <!-- Your custom CSS -->
+    <style>
+        body { display: flex; min-height: 100vh; flex-direction: column; }
+        main { flex: 1; display: flex;}
+        .sidebar { width: 300px; padding: 20px; background-color: #f8f9fa; overflow-y: auto; border-right: 1px solid #dee2e6; }
+        .chat-container { flex: 1; padding: 20px; display: flex; flex-direction: column; max-height: 90vh;}
+        .chat-box { flex-grow: 1; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ccc; padding: 10px; background-color: #fff; }
+        .chat-message { margin-bottom: 10px; padding: 8px 12px; border-radius: 10px; max-width: 80%; }
+        .user-message { background-color: #d1e7fd; align-self: flex-end; margin-left: auto; }
+        .assistant-message { background-color: #e2e3e5; align-self: flex-start; margin-right: auto; }
+        .assistant-message h3 { font-size: 1.1rem; margin-top: 5px; margin-bottom: 5px; color: #0d6efd;}
+        .assistant-message ul { padding-left: 20px; margin-bottom: 0;}
+        .chat-input { display: flex; gap: 10px; }
+        .map-container { margin-top: 20px; border: 1px solid #ccc; padding: 5px; }
+        .options-form { margin-top: 15px; padding: 15px; background-color: #f0f0f0; border-radius: 5px; }
+        .history-box { max-height: 200px; overflow-y: auto; font-size: 0.85rem; margin-top: 10px; padding: 5px; border: 1px dashed #ccc;}
+    </style>
+</head>
+<body>
+    <header class="bg-primary text-white p-3 text-center">
+        <h1>Marunthagam Medical Assistant</h1>
+    </header>
+
+    <main>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h4>User Profile</h4>
+            {% if user_name %}
+                <p><strong>Name:</strong> {{ user_name }}</p>
+            {% endif %}
+            {% if user_email %}
+                <p><strong>Email:</strong> {{ user_email }}</p>
+            {% endif %}
+            <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm mb-3">Logout</a>
+
+            <hr>
+
+            <h4>Your Location</h4>
+            <form method="POST" action="{{ url_for('index') }}">
+                <input type="hidden" name="form_type" value="location_update">
+                <div class="mb-2">
+                    <label for="address" class="form-label">Enter Address:</label>
+                    <input type="text" id="address" name="address" class="form-control form-control-sm">
+                </div>
+                 <p class="text-center small my-1">OR</p>
+                 <div class="row g-2 mb-2">
+                     <div class="col">
+                         <label for="manual_lat" class="form-label">Latitude:</label>
+                         <input type="number" step="any" id="manual_lat" name="manual_lat" class="form-control form-control-sm" value="{{ user_lat }}">
+                     </div>
+                     <div class="col">
+                         <label for="manual_lon" class="form-label">Longitude:</label>
+                         <input type="number" step="any" id="manual_lon" name="manual_lon" class="form-control form-control-sm" value="{{ user_lon }}">
+                     </div>
+                 </div>
+                <button type="submit" class="btn btn-secondary btn-sm w-100">Update Location</button>
+            </form>
+            <p class="mt-2 small">Current: Lat: {{ "%.4f"|format(user_lat) }}, Lon: {{ "%.4f"|format(user_lon) }}</p>
+
+            <hr>
+            <h4>Query History</h4>
+            <div class="history-box">
+                {% for item in query_history|reverse %}
+                    <p class="mb-1 border-bottom">{{ item }}</p>
+                {% else %}
+                    <p>No history yet.</p>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <section class="chat-container">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Chat Box -->
+            <div class="chat-box" id="chatBox">
+                {% for message in messages %}
+                    <div class="chat-message {% if message.role == 'user' %}user-message{% else %}assistant-message{% endif %}">
+                       {% if message.role == 'user' %}
+                            <strong>You:</strong>
+                       {% else %}
+                            <strong>Assistant:</strong><br>
+                       {% endif %}
+                       {{ message.content | safe }} {# Use safe filter to render HTML content from assistant #}
+                    </div>
+                {% endfor %}
+                 <!-- Placeholder for feedback buttons if needed -->
+                {% if selected_option == 'exit(to end)' %}
+                    <div class="text-center mt-2">
+                        <p>How was your experience?</p>
+                        <button class="btn btn-success btn-sm" onclick="alert('Thanks for the positive feedback!')">👍</button>
+                        <button class="btn btn-danger btn-sm" onclick="alert('Sorry to hear that. We will improve.')">👎</button>
+                    </div>
+                {% endif %}
+            </div>
+
+             <!-- Doctor Map -->
+             {% if map_html %}
+             <div class="map-container">
+                 <h5>Doctor Locations Map</h5>
+                 {{ map_html | safe }}
+             </div>
+             {% endif %}
+
+            <!-- Options Form -->
+            {% if show_options and current_disease %}
+            <div class="options-form">
+                <form method="POST" action="{{ url_for('index') }}">
+                    <input type="hidden" name="form_type" value="options_form">
+                    <label for="option_select" class="form-label">More info about <strong>{{ current_disease }}</strong>:</label>
+                    <div class="input-group">
+                        <select name="option" id="option_select" class="form-select">
+                            <option value="Recommended Diet" {% if selected_option == "Recommended Diet" %}selected{% endif %}>Recommended Diet</option>
+                            <option value="Medications" {% if selected_option == "Medications" %}selected{% endif %}>Medications</option>
+                            <option value="Other Symptoms" {% if selected_option == "Other Symptoms" %}selected{% endif %}>Other Symptoms</option>
+                            <option value="Precautions" {% if selected_option == "Precautions" %}selected{% endif %}>Precautions</option>
+                            <option value="Suggested Workouts" {% if selected_option == "Suggested Workouts" %}selected{% endif %}>Suggested Workouts</option>
+                            <option value="Show recommended doctors" {% if selected_option == "Show recommended doctors" %}selected{% endif %}>Show Recommended Doctors</option>
+                            <option value="exit(to end)" {% if selected_option == "exit(to end)" %}selected{% endif %}>Exit Interaction</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Get Info</button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+
+
+            <!-- Chat Input Form -->
+            <form method="POST" action="{{ url_for('index') }}" class="mt-auto">
+                 <input type="hidden" name="form_type" value="chat_input">
+                 <div class="chat-input">
+                    <input type="text" name="query" id="chatQuery" class="form-control" placeholder="Enter symptoms or ask about a condition..." required>
+                    <button type="button" id="recordButton" class="btn btn-secondary" title="Record Voice">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+                 <div id="recordingStatus" class="form-text text-muted">Recording...</div>
+            </form>
+
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/speech.js') }}"></script>
+     <script>
+        // Auto-scroll chat box
+        const chatBox = document.getElementById('chatBox');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    </script>
+
+</body>
+</html>

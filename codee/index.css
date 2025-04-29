@@ -1,0 +1,29 @@
+/* Add any custom styles here */
+body {
+    font-family: sans-serif;
+}
+
+/* Example: Style the severity colors directly if needed */
+.severity-green { color: green; font-weight: bold; }
+.severity-orange { color: orange; font-weight: bold; }
+.severity-red { color: red; font-weight: bold; }
+.severity-grey { color: grey; }
+
+/* Style for doctor list */
+.doctor-list ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+.doctor-list li {
+    border-bottom: 1px solid #eee;
+    padding: 5px 0;
+}
+
+
+/* Add your custom styles here */
+
+#recordingStatus {
+
+    display: none;
+
+}

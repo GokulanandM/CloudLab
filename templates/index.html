@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marunthagam</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="d-flex justify-content-between align-items-center p-3">
+        <img class="myimg" src="{{ url_for('static', filename='images/mlogo.png') }}" alt="Logo" style="width: 60px;">
+        <h1>Marunthagam</h1>
+        <div>
+            <a href="/login" class="btn btn-light">Login</a>
+            <a href="/signup" class="btn btn-warning">Signup</a>
+        </div>
+    </header>
+
+    <!-- Body -->
+    <div class="container my-5">
+        <section>
+            <h2>About Marunthagam</h2>
+            <p>Discover our assistance in disease prediction, symptom analysis, and medicine recommendations.</p>
+        </section>
+
+        <section class="mt-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card feature-card-1">
+                        <h4>Disease Prediction</h4>
+                        <p>Utilize advanced AI techniques to predict potential diseases based on your symptoms.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card feature-card-2">
+                        <h4>Symptom Analysis</h4>
+                        <p>Analyze your symptoms using our cutting-edge system for accurate diagnosis.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card feature-card-3">
+                        <h4>Medicine Recommendations</h4>
+                        <p>Get personalized medicine suggestions based on your health profile and symptoms.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white p-3 text-center mt-auto" style="position: fixed; width: 100%; bottom: 0;">
+        <p>Contact us: srikrish2705guru@gmail.com</p>
+        <p>&copy; 2024 Marunthagam</p>
+    </footer>
+
+    <!-- Popup message -->
+    <div id="popup" class="popup-message">
+        <p>If you want to discover our assistance, sign up. If you're already a user, log in.</p>
+        <button class="btn btn-danger" onclick="document.getElementById('popup').style.display='none'">Close</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='script/index.js') }}"></script>
+</body>
+</html>

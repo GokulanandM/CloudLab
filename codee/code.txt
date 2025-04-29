@@ -1,0 +1,18 @@
+Flask
+pandas
+numpy
+scikit-learn  # Or the specific library providing GradientBoostingClassifier if different
+pickle5      # Ensure compatibility if pickle was created with Python 3.8+
+spacy
+nltk
+urllib3      # Dependency often needed
+textblob
+flashtext
+folium
+geopy
+SpeechRecognition
+pyaudio      # Needed by SpeechRecognition for microphone access (may need manual install steps depending on OS)
+Jinja2       # Flask dependency, usually included
+itsdangerous # Flask dependency
+Werkzeug     # Flask dependency
+en_core_web_sm # Spacy model - install via: python -m spacy download en_core_web_sm

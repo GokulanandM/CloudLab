@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marunthagam Chatbot - {{ username }}</title>
+    <!-- Mapbox GL JS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <h3>Welcome, {{ username }}!</h3>
+        <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+        <h4>Chat History</h4>
+        <div id="history-list">
+            <!-- History items will be loaded here -->
+            <p>Loading history...</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="chat-container">
+            <div id="chat-box" class="chat-box">
+                <!-- Chat messages will appear here -->
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="chat-input" placeholder="Type your symptoms or ask a question..." autofocus>
+                <button id="send-button" onclick="sendQuery()">➤</button>
+                <button id="voice-button" onclick="startVoiceInput()" title="Start Voice Input">🎤</button>
+            </div>
+             <div id="typing-indicator" class="typing-indicator" style="display: none;">
+                 <span></span><span></span><span></span>
+             </div>
+        </div>
+
+        <div id="map-container" class="map-container" style="display: none;">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- Pass Mapbox token to JS -->
+    <script>
+        const MAPBOX_ACCESS_TOKEN = "{{ mapbox_token }}"; // Get token from Flask
+    </script>
+
+    <script>
+        // Function to initialize the map
+        function initMap(lat, lon) {
+            mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+            var map = new mapboxgl.Map({
+                container: 'map', // The ID of the element
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [lon, lat],
+                zoom: 14
+            });
+
+            // Add a marker at the provided location
+            new mapboxgl.Marker().setLngLat([lon, lat]).addTo(map);
+        }
+
+        function showMap() {
+            // Get user location (latitude and longitude)
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                initMap(lat, lon);
+            });
+        }
+    </script>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='script/chatbot.js') }}"></script>
+</body>
+</html>

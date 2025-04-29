@@ -1,0 +1,47 @@
+/* General Styles */
+body {
+    background-color: #f8f9fa; /* Light background */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Form Container */
+.container {
+    max-width: 500px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Heading */
+h2 {
+    font-size: 2rem;
+    color: #4caf50; /* Green */
+}
+
+/* Form Labels */
+.form-label {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Submit Button */
+button[type="submit"] {
+    background-color: #4caf50; /* Green */
+    border: none;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease;
+}
+button[type="submit"]:hover {
+    background-color: #388e3c; /* Darker Green */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    h2 {
+        font-size: 1.8rem;
+    }
+}
